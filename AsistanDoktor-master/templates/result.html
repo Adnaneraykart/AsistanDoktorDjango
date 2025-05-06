@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <title>Tahmin Sonucu</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <header>
+    Asistan Doktor Sağlık Taraması Sonuçları
+    <!-- Tema değiştirme ikonu -->
+    <span id="theme-toggle" style="font-size: 2rem; cursor: pointer;">🌞</span>
+  </header>
+
+  <main>
+    <h2>Asistan Doktor</h2>
+    <div class="image-card">
+      <img src="{{ url_for('static', filename='images/DALL·E-2025-03-06-08.48.jpg') }}" alt="Resim Açıklaması">
+    </div>
+    {% if prediction %}
+      <h3>Karşılaşmanız En Muhtemel Olan 10 Hastalık </h3>
+      <ul>
+        {% for disease, prob in prediction %}
+          <li>{{ disease }}: {{ '%.2f' % (prob * 100) }}%</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Hastalık tahmini yapılamadı.</p>
+    {% endif %}
+    <p>
+      <a href="{{ url_for('home', reset=1) }}">Semptom Sayfası</a> |
+      <a href="/logout">Çıkış Yap</a> |
+      <a href="/recommendations">Öneriler</a>
+    </p>
+  </main>
+
+  <!-- JavaScript Dosyası: /static/theme-toggle.js -->
+  <script src="static/script.js"></script>
+<script>
+ // Konfigürasyon Ayarları
+    const SMOOTH_FACTOR = 0.08;   // Hedefe yumuşak yaklaşma oranı
+    const DAMPING_FACTOR = 0.85;  // Hızı kesme oranı (daha yükseği = daha yavaşlama)
+    const STOP_THRESHOLD = 0.5;   // Bu değerin altı hareketin "durmuş" sayılması için
+
+    let targetScroll = 0;         // Hedef kaydırma konumu
+    let currentScroll = 0;        // Mevcut kaydırma konumu
+    let velocity = 0;             // Anlık hız
+    let isAnimating = false;      // Animasyon döngüsünün durumu
+
+    // Mouse konumuna göre hedef kaydırma pozisyonu belirle
+    document.addEventListener(
+      'mousemove',
+      function(event) {
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const mouseYPercentage = event.clientY / window.innerHeight;
+        targetScroll = mouseYPercentage * maxScroll;
+
+        // Halihazırda animasyon çalışmıyorsa başlat
+        if (!isAnimating) {
+          isAnimating = true;
+          requestAnimationFrame(smoothScroll);
+        }
+      },
+      { passive: true }
+    );
+
+    // Akıcı kaydırma döngüsü
+    function smoothScroll() {
+      // Hedefe olan mesafe
+      const distance = targetScroll - currentScroll;
+
+      // Hem mesafe hem hız çok küçükse animasyonu durdur (mikro titreşimi keser)
+      if (Math.abs(distance) < STOP_THRESHOLD && Math.abs(velocity) < STOP_THRESHOLD) {
+        isAnimating = false;
+        return;
+      }
+
+      // Hızlanma ve yavaşlama hesapları
+      velocity += distance * SMOOTH_FACTOR;
+      velocity *= DAMPING_FACTOR;
+      currentScroll += velocity;
+
+      // Sayfa sonu veya başında taşma olmasın diye sınırlandır
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (currentScroll < 0) {
+        currentScroll = 0;
+        velocity = 0;
+      } else if (currentScroll > maxScroll) {
+        currentScroll = maxScroll;
+        velocity = 0;
+      }
+
+      // Kaydırma uygula
+      window.scrollTo(0, currentScroll);
+
+      // Animasyonu sürdür
+      requestAnimationFrame(smoothScroll);
+    }
+
+    // Sayfa yüklendikten bir süre sonra "Aşağı kaydırın" mesajını göster
+    window.onload = function() {
+      setTimeout(function() {
+        document.getElementById('scrollDownMessage').style.display = 'block';
+      }, 500);
+    };
+  </script>
+</body>
+</html>

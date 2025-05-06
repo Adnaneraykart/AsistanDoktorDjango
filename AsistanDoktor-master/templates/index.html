@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <title>AsistanDoktor</title>
+
+  <!-- Stil dosyanız (mevcutsa) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- Basit responsive düzen; mevcut CSS’inize eklenebilir -->
+  <style>
+    html,body{margin:0;padding:0;height:100%;scroll-behavior:smooth;font-family:system-ui,Segoe UI,Helvetica,Arial;}
+    .container{max-width:720px;margin:auto;padding:2rem;}
+    h2{margin-top:0;text-align:center}
+    textarea{width:100%;min-height:150px;padding:1rem;font-size:1rem;border-radius:6px;border:1px solid #ccc}
+    .btn{padding:.6rem 1.2rem;border:none;border-radius:6px;font-weight:600;cursor:pointer}
+    .btn-send{background:#0d6efd;color:#fff}
+    .btn-logout{display:inline-block;margin-top:1rem;font-size:.9rem}
+    /* Karanlık mod için örnek (mevcut tema toggle’ınızla birleşir) */
+    body.dark{background:#121212;color:#e0e0e0}
+    body.dark textarea{background:#1d1d1d;color:#fafafa;border-color:#444}
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>AsistanDoktor</h2>
+
+  <!-- Kapak resmi (isteğe bağlı) -->
+  <div class="image-card" style="text-align:center;margin-bottom:1rem;">
+    <img src="{{ url_for('static', filename='images/DALL·E-2025-03-06-08.48.jpg') }}"
+         alt="AsistanDoktor" style="max-width:100%;border-radius:8px">
+  </div>
+
+  <!-- Tema değiştirme ikonu -->
+  <span id="theme-toggle" style="cursor:pointer;font-size:1.3rem;position:fixed;top:16px;right:20px;">🌞</span>
+
+  <!-- Açıklama -->
+  <p>Semptomlarınızı, varsa yaş, cinsiyet ve alışkanlıklara dair bilgileri <strong>tek bir metin</strong> hâlinde yazın. Örnek:</p>
+  <blockquote style="font-size:.9rem">
+    “Merhaba, 45 yaşındayım. Erkeğim. Yüksek tansiyonum var, kolesterolüm sınırda. Sigara içiyorum ama alkol tüketmiyorum. Son iki gündür ateşim var, kuru öksürüğüm başladı ve nefes almakta zorlanıyorum.”
+  </blockquote>
+
+  <!-- METİN TABANLI GİRİŞ -->
+  <form id="symptomForm" method="POST" action="{{ url_for('home') }}">
+    <textarea name="message"
+              placeholder="Semptomlarınızı buraya yazın..."
+              autofocus required></textarea>
+    <div style="display:flex;justify-content:flex-end;margin-top:.8rem;">
+      <button type="submit" class="btn btn-send">Gönder</button>
+    </div>
+  </form>
+
+  <!-- Çıkış -->
+  <a href="{{ url_for('logout') }}" class="btn-logout">🔒 Çıkış Yap</a>
+</div>
+
+<!-- Mevcut script dosyalarınız -->
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+<!-- Tema toggle (varsayılanınız yoksa basit örnek) -->
+<script>
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  // ikon durumu
+  const icon = document.getElementById('theme-toggle');
+  icon.textContent = document.body.classList.contains('dark') ? '🌙' : '🌞';
+});
+</script>
+
+<!-- İsteğe bağlı: fareyle tüm sayfa kaydırma/smooth-scroll kodunuz -->
+<script>
+/* — mevcut smooth-scroll kodunuz (1) ve chatBox kodu (2) kaldırıldı,
+   çünkü artık chat geçmişi yok. İsterseniz sadece “1) TÜM SAYFA” kısmını
+   buraya bırakabilirsiniz. */
+</script>
+</body>
+</html>
